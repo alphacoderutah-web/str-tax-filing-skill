@@ -1,0 +1,16 @@
+# Never commit a populated registry or any real filing data.
+# The files tracked here are TEMPLATES. If you populate them locally,
+# either keep them untracked or keep this repository private.
+
+resources/account-registry.local.yaml
+resources/*.local.*
+runs/
+source-exports/
+confirmations/
+worksheets/
+packets/
+*.csv
+*.xls
+*.xlsx
+*.pdf
+.DS_Store

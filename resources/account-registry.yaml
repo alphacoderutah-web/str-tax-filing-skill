@@ -1,0 +1,95 @@
+version: 2.0-template
+last_updated: TEMPLATE
+security_note: >-
+  Tax account/certificate numbers only. Login credentials, FEINs, PINs, bank routing/account
+  numbers, and payment secrets are intentionally excluded and must never be added.
+
+# ---------------------------------------------------------------------------
+# TEMPLATE. Every value below is a placeholder.
+#
+# Populate from government registration documents and live portal records, then
+# keep this file OUT of any public repository. It is the persistent map of which
+# government account belongs to which entity and property.
+#
+# confidence values:
+#   VERIFIED_DOCUMENT          - read off a government registration/notice document
+#   VERIFIED_LIVE_PORTAL       - read off the authenticated portal account screen
+#   HISTORICAL_PORTAL_OBSERVED - from a prior filing cycle; MUST be re-verified live
+# ---------------------------------------------------------------------------
+
+florida_dor:
+  - key: FL-DOR-<GROUP-A>
+    entity: "<ENTITY-A>"
+    certificate_number: "<FL-DOR-CERT-A>"     # format: NN-NNNNNNNNNN-N
+    registration_effective_date: "<YYYY-MM-DD>"
+    property_group:
+      - "<PROPERTY-01>"
+      - "<PROPERTY-02>"
+    evidence: "<where this value came from>"
+    confidence: VERIFIED_DOCUMENT
+    needs_live_verification: false
+    notes:
+      - "Record any prior penalty-waiver history here; it drives heightened deadline control."
+
+  - key: FL-DOR-<GROUP-B>
+    entity: "<ENTITY-B>"
+    certificate_number: "<FL-DOR-CERT-B>"
+    property_group:
+      - "<PROPERTY-03>"
+    evidence: "<source>"
+    confidence: VERIFIED_DOCUMENT
+    needs_live_verification: false
+    correction:
+      supersedes_historical_value: "<OLD-INCORRECT-VALUE>"
+      reason: "Historical note transposed digits; government certificate is authoritative."
+    historical_entry_note: >-
+      Record any handwritten/legacy rate note here, but verify the current period rate
+      from an official source before use.
+
+florida_county_tdt:
+  - key: FL-<COUNTY-X>-<GROUP-A>
+    jurisdiction: "<County> County"
+    entity: "<ENTITY-A>"
+    account_number: "<COUNTY-TDT-ACCT-A>"
+    property_group:
+      - "<PROPERTY-01>"
+    evidence: "Historical live-portal observation from <period> filing cycle"
+    confidence: HISTORICAL_PORTAL_OBSERVED
+    needs_live_verification: true
+    open_issue: >-
+      County TDT account numbers observed in a past cycle are the LOWEST-confidence tier in
+      this registry. Re-read them off the live portal before entering any figures.
+
+utah_tap:
+  - key: UT-CUSTOMER-<ENTITY-A>
+    entity: "<ENTITY-A>"
+    account_type: "Customer"
+    account_number: "<UT-CUSTOMER>"
+    confidence: VERIFIED_DOCUMENT
+    needs_live_verification: false
+
+  - key: UT-STC-<ENTITY-A>
+    entity: "<ENTITY-A>"
+    account_type: "Sales and Use Tax (STC)"
+    account_number: "<UT-CUSTOMER>-NNN-STC"
+    filing_forms:
+      - "TC-62M - Sales and Use Tax Return for Multiple Places of Business"
+      - "TC-62S - Sales and Use Tax Return for Single Place of Business"
+    confidence: VERIFIED_DOCUMENT
+    needs_live_verification: false
+    filing_frequency: "VERIFY_IN_TAP - the live account screen is authoritative"
+
+  - key: UT-STR-<ENTITY-A>
+    entity: "<ENTITY-A>"
+    account_type: "Sales Transient Room (STR)"
+    account_number: "<UT-CUSTOMER>-NNN-STR"
+    filing_forms:
+      - "TC-62T - Transient Room Tax Return"
+    filing_mechanism: >-
+      TC-62T is filed by uploading the official Excel template to TAP. The instructions state
+      it is the ONLY approved template. Save as .xls, NOT .xlsx. No blank rows. Paste values,
+      never formulas. Columns: A Taxing Jurisdiction (auto), B 5-digit County/City code,
+      C Outlet number, D Gross receipts (2dp), E Tax rate (4dp), F Tax due (auto).
+    confidence: VERIFIED_DOCUMENT
+    needs_live_verification: false
+    filing_frequency: "VERIFY_IN_TAP"
